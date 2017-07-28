@@ -21,13 +21,13 @@ import (
 )
 
 var (
-	docker_socket = flag.String("s", "", "Dockerd socket (e.g., /var/run/docker.sock)")
-	docker_addr   = flag.String("d", "", "Dockerd addr (e.g., 127.0.0.1:2375)")
-	serveAddr     = flag.String("p", ":8080", "Address and port to serve")
-	serveSAddr    = flag.String("ps", ":80443", "Address and port to serve HTTPS")
-	redisAddr     = flag.String("r", "127.0.0.1:6379", "redis address")
-	redisPass     = flag.String("rp", "", "redis password")
-	certPath      = flag.String("tls", "", "cert path")
+	dockerSocket = flag.String("s", "", "Dockerd socket (e.g., /var/run/docker.sock)")
+	dockerAddr   = flag.String("d", "", "Dockerd addr (e.g., 127.0.0.1:2375)")
+	serveAddr    = flag.String("p", ":8080", "Address and port to serve")
+	serveSAddr   = flag.String("ps", ":80443", "Address and port to serve HTTPS")
+	redisAddr    = flag.String("r", "127.0.0.1:6379", "redis address")
+	redisPass    = flag.String("rp", "", "redis password")
+	certPath     = flag.String("tls", "", "cert path")
 )
 
 func docker(repo, version string, pool *r.Pool) (int, string) {
@@ -52,10 +52,10 @@ func docker(repo, version string, pool *r.Pool) (int, string) {
 
 	host := ""
 
-	if *docker_socket != "" {
-		host = "unix://" + *docker_socket
-	} else if *docker_addr != "" {
-		host = "tcp://" + *docker_addr
+	if *dockerSocket != "" {
+		host = "unix://" + *dockerSocket
+	} else if *dockerAddr != "" {
+		host = "tcp://" + *dockerAddr
 	} else {
 		return 500, "cannot connect to docker daemon"
 	}
@@ -144,7 +144,7 @@ func main() {
 
 		github := struct {
 			Repository struct {
-				Full_Name string
+				FullName string
 			}
 		}{}
 
@@ -152,9 +152,9 @@ func main() {
 			return 500, err.Error()
 		}
 
-		go docker(github.Repository.Full_Name, "", pool)
+		go docker(github.Repository.FullName, "", pool)
 
-		return 202, github.Repository.Full_Name
+		return 202, github.Repository.FullName
 	})
 	m.Get("/_badge/**", func(params martini.Params, r render.Render) {
 		var (
